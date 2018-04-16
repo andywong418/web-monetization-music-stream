@@ -14,6 +14,7 @@ const monetizer = new ExpressWebMonetization();
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const serveIndex = require("serve-index");
+const stream = require('stream');
 
 const EXPRESS_WEB_MONETIZATION_CLIENT_PATH =
   "/node_modules/express-web-monetization/client.js";
@@ -60,7 +61,28 @@ app.get("/music", (req, res) => {
   fs.exists(file, exists => {
     if (exists) {
       const rstream = fs.createReadStream(file);
-      rstream.pipe(res);
+      function createParser () {
+        const transform = new stream.Transform({
+          writableObjectMode: true,
+          async transform (chunk, encoding, cb) {
+            try {
+              await req.awaitBalance(100)
+              req.spend(100);
+              rstream.resume();
+              cb(null, chunk);
+            }
+            catch(error) {
+              console.log("error?", error);
+              rstream.pause()
+            }
+          }
+        });
+        return transform
+      }
+
+      rstream.on('error', e => console.error(e))
+      rstream.pipe(createParser()).pipe(res);
+      // rstream.pipe(transform).pipe(res);
     } else {
       res.send("Its a 404");
       res.end();

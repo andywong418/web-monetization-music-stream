@@ -12,7 +12,7 @@ class AudioPlayer extends Component {
     if (!this.props.title) {
       return (
         <div className="player-wrapper">
-          <h1 className>select song to begin</h1>
+          <h1>select song to begin</h1>
         </div>
       );
     }
