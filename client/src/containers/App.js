@@ -21,6 +21,7 @@ class App extends Component {
           <AudioPlayer
             src={"/music?id=" + this.state.currentSong}
             title={this.state.currentSong}
+            currentSong={this.state.currentSong}
           />
           <Playlist onSelectSong={this.handleSongSelect} />
         </div>

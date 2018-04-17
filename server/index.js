@@ -10,17 +10,18 @@ const {
   WebMonetizationMiddleware,
   ExpressWebMonetization
 } = require("express-web-monetization");
-const monetizer = new ExpressWebMonetization();
+const monetizer = new ExpressWebMonetization({maxBalance: 1000});
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const serveIndex = require("serve-index");
 const stream = require('stream');
-
 const Throttle = require('throttle');
+const mp3Duration = require('mp3-duration');
+
 const EXPRESS_WEB_MONETIZATION_CLIENT_PATH =
   "/node_modules/express-web-monetization/client.js";
 const WEB_SERVER_PORT = 8080;
-const FREE_BYTES = 150000;
+const FREE_BYTES = 50000;
 
 app.use(
   "/scripts/monetization-client.js",
@@ -40,12 +41,6 @@ router.get(monetizer.receiverEndpointUrl, monetizer.receive.bind(monetizer));
 // This endpoint charges 100 units to the user with :id
 // If awaitBalance is set to true, the call will stay open until the balance is sufficient. This is convenient
 // for making sure that the call doesn't immediately fail when called on startup.
-router.get("/content/", async (req, res) => {
-  await req.awaitBalance(100);
-
-  req.spend(100);
-  // load content
-});
 
 // If we choose to publish the web app, this is where we would serve it
 // router.get("/", (req, res) => {
@@ -54,7 +49,14 @@ router.get("/content/", async (req, res) => {
 
 app.use(express.static(__dirname + "/"));
 app.use("/playlist", serveIndex(__dirname + "/music"));
-
+app.get('/duration', (req, res) => {
+  const { id } = req.query;
+  const file = __dirname + "/music/" + id;
+  mp3Duration(file, (err, duration) => {
+    if(err) return console.log(err.message);
+    res.send({ duration });
+  })
+})
 // TODO: add monetizer here
 app.get("/music", (req, res) => {
   const { id } = req.query;
@@ -64,7 +66,8 @@ app.get("/music", (req, res) => {
     if (exists) {
       const rstream = fs.createReadStream(file);
       let cost = 100;
-      var throttle = new Throttle({bps: 60000, chunkSize: 60000});
+      // Decrease chunksize as song progresses.
+      var throttle = new Throttle({bps: cost * 500, chunkSize: cost * 500});
       function createParser () {
         const transform = new stream.Transform({
           writableObjectMode: true,
