@@ -16,9 +16,11 @@ const path = require("path");
 const serveIndex = require("serve-index");
 const stream = require('stream');
 
+const Throttle = require('throttle');
 const EXPRESS_WEB_MONETIZATION_CLIENT_PATH =
   "/node_modules/express-web-monetization/client.js";
 const WEB_SERVER_PORT = 8080;
+const FREE_BYTES = 150000;
 
 app.use(
   "/scripts/monetization-client.js",
@@ -61,28 +63,30 @@ app.get("/music", (req, res) => {
   fs.exists(file, exists => {
     if (exists) {
       const rstream = fs.createReadStream(file);
+      let cost = 100;
+      var throttle = new Throttle({bps: 60000, chunkSize: 60000});
       function createParser () {
         const transform = new stream.Transform({
           writableObjectMode: true,
           async transform (chunk, encoding, cb) {
-            try {
-              await req.awaitBalance(100)
-              req.spend(100);
-              rstream.resume();
+
+            if(rstream.bytesRead < FREE_BYTES) {
+              console.log('giving free bytes. total=' + rstream.bytesRead);
               cb(null, chunk);
+              return;
             }
-            catch(error) {
-              console.log("error?", error);
-              rstream.pause()
-            }
+            console.log("chunk length", chunk.length);
+            await req.awaitBalance(cost);
+            req.spend(cost);
+            cb(null, chunk);
+
           }
         });
         return transform
       }
 
       rstream.on('error', e => console.error(e))
-      rstream.pipe(createParser()).pipe(res);
-      // rstream.pipe(transform).pipe(res);
+      rstream.pipe(throttle).pipe(createParser()).pipe(res);
     } else {
       res.send("Its a 404");
       res.end();
