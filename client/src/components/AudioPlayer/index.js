@@ -3,7 +3,8 @@ import { Media, Player, controls } from "react-media-player";
 import PlayPause from "./PlayPause";
 import MuteUnmute from "./MuteUnmute";
 import Duration from './Duration';
-const { CurrentTime, SeekBar, Volume } = controls;
+import SeekBar from './Seekbar';
+const { CurrentTime, Volume } = controls;
 
 const CurrentTitle = props => <h1>{props.title || "Select Song"}</h1>;
 
@@ -26,7 +27,7 @@ class AudioPlayer extends Component {
             <PlayPause className="media-control media-control--play-pause" />
             <div className="media-time-controls">
               <CurrentTime className="media-control media-control--current-time" />
-              <SeekBar className="media-control media-control--volume-range" />
+              <SeekBar className="media-control media-control--volume-range" title={this.props.title}/>
               {this.props.currentSong? <Duration className="media-control media-control--duration" title={this.props.title}/> : null}
             </div>
             <div className="media-volume-control">
