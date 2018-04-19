@@ -5,20 +5,8 @@ import { withMediaProps, utils } from "react-media-player";
 class SeekBar extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      duration: 0
-    }
     this._isPlayingOnMouseDown = false
     this._onChangeUsed = false
-  }
-  componentDidMount() {
-    let self = this;
-    fetch("/duration?id=" + this.props.title)
-      .then(response => response.json())
-      .then(data => {
-          self.setState({duration: data.duration});
-          this.props.media.duration = data.duration;
-      })
   }
 
   shouldComponentUpdate({ media }) {
@@ -50,6 +38,15 @@ class SeekBar extends Component {
     this._onChangeUsed = true
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { className, style, media } = nextProps;
+    const { currentTime } = media;
+    if(currentTime >= this.props.duration - 1) {
+      // change next Track
+
+      this.props.playNextTrack();
+    }
+  }
   render() {
     const { className, style, media } = this.props
     const { currentTime } = media
@@ -57,14 +54,14 @@ class SeekBar extends Component {
       <input
         type="range"
         step="any"
-        max={this.state.duration.toFixed(4)}
+        max={this.props.duration.toFixed(4)}
         value={currentTime}
         onMouseDown={this._handleMouseDown}
         onMouseUp={this._handleMouseUp}
         onChange={this._handleChange}
         className={className}
         style={{
-          backgroundSize: currentTime * 100 / this.state.duration + '% 100%',
+          backgroundSize: currentTime * 100 / this.props.duration + '% 100%',
           ...style,
         }}
       />

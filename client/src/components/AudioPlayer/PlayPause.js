@@ -22,7 +22,6 @@ class PlayPause extends Component {
       media: { isPlaying },
       className
     } = this.props;
-
     return (
       <svg
         role="button"
