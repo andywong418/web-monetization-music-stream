@@ -1,0 +1,22 @@
+{
+  "@context":{
+      "dct":"http://purl.org/dc/terms",
+      "contentType":"http://purl.org/dc/dcmitype/",
+      "schema":"http://schema.org/",
+      "candidate":"http://schema.org/name",
+      "candidateUrl":{"@id":"http://schema.org/url","@type":"@id"},
+      "owner":"http://schema.org/name",
+      "ownerUrl":{"@id":"http://schema.org/url","@type":"@id"}
+    },
+    "dct:title":"Natsusemi - Asian Kung Fu-Generation Sub Españ",
+    "contentType":"audio",
+    "candidate":"",
+    "candidateUrl":"",
+    "owner":"Andros Wong",
+    "ownerUrl":"androswong.com",
+    "rateType":"byte",
+    "rate":"100",
+    "currency":"XRP",
+    "licenseType":"Distribute",
+    "paymentPointer":"$andros.localtunnel.me"
+  }

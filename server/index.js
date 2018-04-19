@@ -17,6 +17,8 @@ const serveIndex = require("serve-index");
 const stream = require('stream');
 const Throttle = require('throttle');
 const mp3Duration = require('mp3-duration');
+const plugin = require('ilp-plugin')();
+const SPSP = require('ilp-protocol-spsp');
 
 const EXPRESS_WEB_MONETIZATION_CLIENT_PATH =
   "/node_modules/express-web-monetization/client.js";
@@ -57,15 +59,27 @@ app.get('/duration', (req, res) => {
     res.send({ duration });
   })
 })
+app.get('/license', (req, res) => {
+  const { id } = req.query;
+  const licenseName = id.substr(0, id.lastIndexOf(".")) + ".json";
+  const JSONfile = __dirname + "/licenses/" + licenseName;
+  const obj = JSON.parse(fs.readFileSync(JSONfile, 'utf8'));
+  res.send(obj);
+})
 // TODO: add monetizer here
 app.get("/music", (req, res) => {
   const { id } = req.query;
   const file = __dirname + "/music/" + id;
-
-  fs.exists(file, exists => {
+  const licenseName = id.substr(0, id.lastIndexOf(".")) + ".json";
+  const JSONfile = __dirname + "/licenses/" + licenseName;
+  const obj = JSON.parse(fs.readFileSync(JSONfile, 'utf8'));
+  console.log("obj");
+  fs.exists(file, async exists => {
     if (exists) {
       const rstream = fs.createReadStream(file);
       let cost = 100;
+      console.log('connecting plugin');
+      await plugin.connect();
       // Decrease chunksize as song progresses.
       var throttle = new Throttle({bps: cost * 500, chunkSize: cost * 500});
       function createParser () {
@@ -81,6 +95,10 @@ app.get("/music", (req, res) => {
             console.log("chunk length", chunk.length);
             await req.awaitBalance(cost);
             req.spend(cost);
+            SPSP.pay(plugin, {
+              receiver: obj.paymentPointer,
+              sourceAmount: '' + cost
+            });
             cb(null, chunk);
 
           }

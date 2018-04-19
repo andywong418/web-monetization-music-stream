@@ -9,18 +9,19 @@ const { CurrentTime, Volume } = controls;
 const CurrentTitle = props => <h1>{props.title || "Select Song"}</h1>;
 
 class AudioPlayer extends Component {
+
   render() {
     if (!this.props.title) {
       return (
         <div className="player-wrapper">
-          <h1>select song to begin</h1>
+          <h1>Select song to begin</h1>
         </div>
       );
     }
-
+    // Parse paymentPointer and then pay out accordingly by window.monetizing here.
     return (
-      <Media>
-        <div className="player-wrapper">
+      <Media ref="More">
+        <div ref="metadata" className="player-wrapper">
           <Player ref={c => (this._player = c)} src={this.props.src} />
           <div className="media-controls">
             <CurrentTitle title={this.props.title} />
