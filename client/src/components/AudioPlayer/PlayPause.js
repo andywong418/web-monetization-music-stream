@@ -44,7 +44,7 @@ class PlayPause extends Component {
           {!isPlaying && (
             <polygon
               key="play"
-              fill="#CDD7DB"
+              fill="white"
               points="14,11 26,18 14,25"
               style={{ transformOrigin: "100% 50%" }}
             />

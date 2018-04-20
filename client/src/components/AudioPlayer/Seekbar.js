@@ -5,6 +5,9 @@ import { withMediaProps, utils } from "react-media-player";
 class SeekBar extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      currentSong: this.props.songTitle
+    }
     this._isPlayingOnMouseDown = false
     this._onChangeUsed = false
   }
@@ -41,10 +44,10 @@ class SeekBar extends Component {
   componentWillReceiveProps(nextProps) {
     const { className, style, media } = nextProps;
     const { currentTime } = media;
-    if(currentTime >= this.props.duration - 1) {
+    if(currentTime >= this.props.duration - 1 && nextProps.songTitle !== this.state.currentSong) {
       // change next Track
-
       this.props.playNextTrack();
+      this.setState({currentSong: nextProps.songTitle})
     }
   }
   render() {

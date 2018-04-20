@@ -11,14 +11,16 @@ class Playlist extends Component {
   render() {
     return (
       <div className="playlist-wrapper">
-        <h2>Playlist</h2>
+        {this.props.currentSong ? null : <h2 style={{textAlign: 'center'}}>Playlist</h2>}
         <ul className="playlist">
           {this.props.songs.map(song => {
             return (
               <li key={song} className="playlist-item">
+                <span><i className="fas fa-music"></i></span>
                 <a title={song} onClick={this.handleSongSelect}>
                   {song}
                 </a>
+                {song && song === this.props.currentSong ? <i className="fas fa-volume-up"></i> : null}
               </li>
             );
           })}

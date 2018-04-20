@@ -13,9 +13,45 @@ body {
   height: 80px;
 }
 
-.app-header {
-  background-color: #222;
-  padding: 20px;
+.header-nav {
+  background-color: #be4bdb;
+  padding: 10px;
+  color: white;
+}
+
+.header-nav .row {
+  margin-left: 0;
+}
+
+.nav-link, .nav-link:hover, .nav-link:active,  {
+  color: white;
+}
+.navbar-brand, .navbar-brand:hover, navbar-brand:active {
+  color: white;
+  font-size: 25px;
+  font-family: 'Open Sans', sans-serif;
+}
+.navbar-brand span {
+  font-weight: bold;
+}
+
+
+.searchBar {
+  margin: 0 auto;
+}
+
+.search {
+  width: 300px !important;
+}
+
+.nav-pills {
+  position: absolute;
+  color: white;
+  right: 0;
+  font-size: 16px;
+
+}
+.nav-pills a, .nav-pills:hover, .nav-pills:active {
   color: white;
 }
 
@@ -28,11 +64,12 @@ body {
 }
 
 .app-wrapper {
-  width: 550px;
+  width: 50%;
   padding: 25px 50px;
   margin: 35px auto;
   border: 1px solid #efefef;
-  background-color: #ffffff;
+  background-color: darkslateblue;
+  color: white;
   border-radius: 8px;
   -webkit-box-shadow: 3px 3px 33px -3px rgba(204, 204, 204, 0.44);
   -moz-box-shadow: 3px 3px 33px -3px rgba(204, 204, 204, 0.44);
@@ -47,14 +84,9 @@ body {
   padding-top: 10px;
 }
 
-.player-wrapper {
-  margin-bottom: 25px;
-  text-align: center;
-}
 
 .playlist-wrapper {
   text-align: left;
-  border-top: 1px solid #efefef;
 }
 
 .playlist {
@@ -64,18 +96,18 @@ body {
 }
 
 .playlist-item {
-  border-top: 1px solid #efefef;
+margin-bottom: 15px;
 }
 
 .playlist-item a {
   padding: 15px;
   line-height: 2;
-  display: block;
+  display: inline;
   cursor: pointer;
 }
 
 .playlist-item a:hover {
-  background-color: #efefef;
+
 }
 
 * {
@@ -94,7 +126,6 @@ body {
 .media-controls {
   align-items: center;
   padding: 12px;
-  background-color: #282F31;
   color: #fff;
 }
 /* .media-controls svg, .media-controls path, .media-controls polygon {
@@ -140,7 +171,34 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-container {
   background-size: inherit;
 }
+footer {
+  display: flex;
+  height: 200px;
+  background: #be4bdb;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: white;
+  margin-top: 50px;
+  position: absolute;
+  width: 100%;
+}
 
+.link-container {
+  display: flex;
+}
+.link-container p a{
+  margin-left: 10px;
+  color: white;
+}
+
+footer p a:hover {
+  color: white;
+}
+
+.footer-wrapper {
+  width: 100%;
+}
 /* .media-playlist-header {
   padding: 2px;
   background-color: #373d3f;
