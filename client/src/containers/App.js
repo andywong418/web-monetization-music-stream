@@ -46,11 +46,11 @@ class App extends Component {
       <div className="app">
         <Header />
         <div className="text-center">
-            <h1 className="jumbotron-heading" style={{marginTop: '50px'}}> SoundClone demo </h1>
+            <h1 className="jumbotron-heading" style={{marginTop: '50px'}}><img src="" /> Music Streamer</h1>
             <p className="lead text-muted showoff">This is a demo music streamer to show off the capabilities of <a href="https://github.com/interledger/rfcs/blob/master/0028-web-monetization/0028-web-monetization.md">Web Monetization</a> and <a href="https://interledger.org">Interledger</a>.</p>
             <p className="lead text-muted turn"> Turn on your extensions and start listening to quality music whilst contributing to artists!</p>
         </div>
-        <div className="app-wrapper">
+        <div className="app-wrapper col-md-6 col-sm-10 col-xs-10">
           <AudioPlayer
             src={"/music?id=" + this.state.currentSong}
             title={this.state.currentSong}

@@ -27,6 +27,7 @@ body {
   color: white;
 }
 .navbar-brand, .navbar-brand:hover, navbar-brand:active {
+  margin: 0 auto;
   color: white;
   font-size: 25px;
   font-family: 'Open Sans', sans-serif;
@@ -47,7 +48,7 @@ body {
 .nav-pills {
   position: absolute;
   color: white;
-  right: 0;
+  right: 50px;
   font-size: 16px;
 
 }
@@ -64,11 +65,10 @@ body {
 }
 
 .app-wrapper {
-  width: 50%;
   padding: 25px 50px;
   margin: 35px auto;
   border: 1px solid #efefef;
-  background-color: darkslateblue;
+  background-color: #1bb953;
   color: white;
   border-radius: 8px;
   -webkit-box-shadow: 3px 3px 33px -3px rgba(204, 204, 204, 0.44);
@@ -232,6 +232,20 @@ footer p a:hover {
   color: #8bb955;
 } */
 
+@media only screen and (max-width: 600px) {
+  .navbar-brand {
+    margin-left: 30%;
+  }
+  .nav-pills {
+    right: 10px;
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  .navbar-brand {
+    margin-left: 15%;
+  }
+}
 @keyframes app-logo-spin {
   from {
     transform: rotate(0deg);

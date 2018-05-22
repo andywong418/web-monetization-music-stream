@@ -19,11 +19,23 @@ const Throttle = require('throttle');
 const mp3Duration = require('mp3-duration');
 const plugin = require('ilp-plugin')();
 const SPSP = require('ilp-protocol-spsp');
+const axios = require('axios');
 
 const EXPRESS_WEB_MONETIZATION_CLIENT_PATH =
   "/node_modules/express-web-monetization/client.js";
 const WEB_SERVER_PORT = 8080;
 const FREE_BYTES = 50000;
+
+// Later when user uploads a song, there will be an audio fingerprint matching system where we check for the same fingerprint in our DB.
+// If no match then we will query GraceNote API. and store that fingerprint? In that case we should always just query GraceNote API.
+// Licenses database will also have the fingerprint to identify payment pointers
+
+// This is just so we can make the correct API call.
+const mockDB = {
+  "chico_mono.mp3": 1,
+  "Natsusemi - Asian Kung Fu-Generation.mp3": 2,
+  "Marvin Gaye-Sexual Healing (Sashka 2k17 remix).mp3": 3,
+}
 
 app.use(
   "/scripts/monetization-client.js",
@@ -33,12 +45,12 @@ app.use(
 app.use("/public", express.static(__dirname + "/public"));
 app.use(cookieParser());
 app.use(WebMonetizationMiddleware(monetizer));
-
-app.use("/", router);
-
 // This is the SPSP endpoint that lets you receive ILP payments.  Money that
 // comes in is associated with the :id
 router.get(monetizer.receiverEndpointUrl, monetizer.receive.bind(monetizer));
+app.use("/", router);
+
+
 
 // This endpoint charges 100 units to the user with :id
 // If awaitBalance is set to true, the call will stay open until the balance is sufficient. This is convenient
@@ -59,21 +71,17 @@ app.get('/duration', (req, res) => {
     res.send({ duration });
   })
 })
-app.get('/license', (req, res) => {
-  const { id } = req.query;
-  const licenseName = id.substr(0, id.lastIndexOf(".")) + ".json";
-  const JSONfile = __dirname + "/licenses/" + licenseName;
-  const obj = JSON.parse(fs.readFileSync(JSONfile, 'utf8'));
-  res.send(obj);
-})
+
+
 // TODO: add monetizer here
-app.get("/music", (req, res) => {
+app.get("/music", async (req, res) => {
   const { id } = req.query;
   const file = __dirname + "/music/" + id;
   const licenseName = id.substr(0, id.lastIndexOf(".")) + ".json";
-  const JSONfile = __dirname + "/licenses/" + licenseName;
-  const obj = JSON.parse(fs.readFileSync(JSONfile, 'utf8'));
-  console.log("obj");
+  //Ping other server running on serving license files.
+  const fetchUrl = "http://localhost:5000/license/"
+  let licenseObj = await axios.get(fetchUrl + mockDB[id]);
+  licenseObj = licenseObj.data;
   fs.exists(file, async exists => {
     if (exists) {
       const rstream = fs.createReadStream(file);
@@ -96,7 +104,7 @@ app.get("/music", (req, res) => {
             await req.awaitBalance(cost);
             req.spend(cost);
             SPSP.pay(plugin, {
-              receiver: obj.paymentPointer,
+              receiver: licenseObj.paymentPointer,
               sourceAmount: '' + cost
             });
             cb(null, chunk);
